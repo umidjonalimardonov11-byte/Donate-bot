@@ -11,6 +11,11 @@
 - Admin panel (/admin): statistika, Arcadezy balansi, hammaga xabar, bloklash/blokdan chiqarish,
   balans qo'shish/ayirish, ustama %, dollar kursi, karta raqami, foydalanuvchini qidirish, kutilayotgan cheklar
 
+## Mini App (ilova)
+Bot endi faqat "Do'konni ochish" tugmasi va admin panel (/admin) dan iborat. Qolgan hammasi
+(o'yinlar, paketlar, balans, to'ldirish, tarix, profil) Telegram ichidagi ilovada.
+Ishlashi uchun Railway → servis → Settings → Networking → **Generate Domain** qiling.
+
 ## 1. GitHub'ga yuklash
 1. github.com → **New repository** → nom bering (masalan `donat-bot`) → **Private** → Create.
 2. **uploading an existing file** ni bosing va shu papkadagi hamma fayllarni (`src`, `package.json`, `.gitignore`, `README.md`, `.env.example`) tashlang → **Commit**.
