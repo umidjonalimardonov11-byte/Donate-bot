@@ -4,6 +4,9 @@ import { Telegraf, Markup } from "telegraf";
 import { q, initDb, getSetting, setSetting, upsertUser, getUser, addBalance, takeBalance } from "./db.js";
 import { api, ApiError, parseOrder, DONE, FAILED } from "./api.js";
 import { t, ALL_MENU } from "./i18n.js";
+import { setupWebapp } from "./webapp.js";
+
+const WEBAPP_URL = process.env.WEBAPP_URL || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : "");
 
 for (const k of ["BOT_TOKEN", "ARCADEZY_API_KEY", "DATABASE_URL", "ADMIN_IDS"]) {
   if (!process.env[k]) { console.error(`${k} o'rnatilmagan!`); process.exit(1); }
@@ -61,19 +64,32 @@ bot.use(async (ctx, next) => {
   return next();
 });
 
+const WELCOME = {
+  uz: (n) => `⚡ <b>${n}</b>, xush kelibsiz!\n\nBalansingizni to'ldiring — o'yinlarga donatni tez va arzon oling 👇`,
+  ru: (n) => `⚡ <b>${n}</b>, добро пожаловать!\n\nПополните баланс — донат в игры быстро и выгодно 👇`,
+  en: (n) => `⚡ <b>${n}</b>, welcome!\n\nTop up your balance — fast and cheap game top-ups 👇`,
+};
+const OPEN = { uz: "⚡ Do'konni ochish", ru: "⚡ Открыть магазин", en: "⚡ Open shop" };
+async function sendWelcome(ctx, lang) {
+  const l = WELCOME[lang] ? lang : "uz";
+  const kb = WEBAPP_URL ? Markup.inlineKeyboard([[Markup.button.webApp(OPEN[l], WEBAPP_URL)]]) : undefined;
+  await ctx.reply(WELCOME[l](esc(ctx.from.first_name)), { parse_mode: "HTML", ...(kb || {}) });
+  if (isAdmin(ctx.from.id)) await ctx.reply("🛠 Admin panel pastda", Markup.keyboard([["🛠 Admin"]]).resize());
+  else await ctx.reply("👆", Markup.removeKeyboard()).then((m) => ctx.deleteMessage(m.message_id)).catch(() => {});
+}
+
 bot.start(async (ctx) => {
   state.delete(ctx.from.id);
   if (!ctx.user.lang) return ctx.reply("Tilni tanlang / Выберите язык / Choose language:", langKb);
-  await ctx.reply(ctx.L.welcome(esc(ctx.from.first_name)), { parse_mode: "HTML", ...mainMenu(ctx.L, isAdmin(ctx.from.id)) });
+  await sendWelcome(ctx, ctx.user.lang);
 });
 
 bot.action(/^lang:(uz|ru|en)$/, async (ctx) => {
   const lang = ctx.match[1];
   await q("UPDATE users SET lang=$1 WHERE id=$2", [lang, ctx.from.id]);
-  const L = t(lang);
-  await ctx.answerCbQuery(L.lang_set);
+  await ctx.answerCbQuery(t(lang).lang_set);
   await ctx.deleteMessage().catch(() => {});
-  await ctx.reply(L.welcome(esc(ctx.from.first_name)), { parse_mode: "HTML", ...mainMenu(L, isAdmin(ctx.from.id)) });
+  await sendWelcome(ctx, lang);
 });
 
 bot.hears(ALL_MENU("menu_lang"), (ctx) => ctx.reply(ctx.L.choose_lang, langKb));
@@ -488,7 +504,6 @@ bot.catch((err, ctx) => {
 
 // ---------- Arcadezy webhook (ixtiyoriy) ----------
 const app = express();
-app.get("/", (_req, res) => res.send("Bot ishlayapti ✅"));
 app.post("/arcadezy-hook", express.raw({ type: "*/*" }), async (req, res) => {
   const secret = process.env.ARCADEZY_WEBHOOK_SECRET;
   if (!secret) return res.status(503).send("no secret");
@@ -508,12 +523,17 @@ app.post("/arcadezy-hook", express.raw({ type: "*/*" }), async (req, res) => {
   } catch (e) { console.error("Webhook xatosi:", e); }
 });
 
+// ---------- Mini App ----------
+setupWebapp(app, { bot, refund, finishIfFinal, notifyAdmins, pricing, priceUzs, cached, ADMINS, fmt, esc });
+
 // ---------- Ishga tushirish ----------
 await initDb();
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("HTTP port", PORT));
 setInterval(() => pollOrders().catch(console.error), 2 * 60e3);
 await bot.telegram.setMyCommands([{ command: "start", description: "Start" }]);
+if (WEBAPP_URL) await bot.telegram.setChatMenuButton({ menuButton: { type: "web_app", text: "Do'kon", web_app: { url: WEBAPP_URL } } }).catch(console.error);
+else console.warn("WEBAPP_URL yo'q — Railway'da Generate Domain qiling");
 bot.launch({ dropPendingUpdates: true });
 console.log("Bot ishga tushdi ✅");
 process.once("SIGINT", () => bot.stop("SIGINT"));
