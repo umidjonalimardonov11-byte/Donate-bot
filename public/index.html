@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Donat</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand" id="brand">
+      <div class="logo">⚡</div>
+      <div>
+        <div class="brand-name" id="brandName">Donat</div>
+        <div class="brand-sub" id="brandSub">o'yinlar • top-up</div>
+      </div>
+    </div>
+    <button class="chip-btn" id="langBtn">UZ</button>
+  </header>
+  <main id="view"></main>
+  <nav class="tabbar">
+    <button data-tab="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span data-t="home">Asosiy</span></button>
+    <button data-tab="shop"><svg viewBox="0 0 24 24"><path d="M3 8h18v4H3zM5 12h14v9H5zM12 8v13M12 8S10 3 7.5 4 9 8 12 8zm0 0s2-5 4.5-4S15 8 12 8z"/></svg><span data-t="shop">Do'kon</span></button>
+    <button data-tab="history"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-t="history">Tarix</span></button>
+    <button data-tab="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span data-t="profile">Profil</span></button>
+  </nav>
+  <div id="toast"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
