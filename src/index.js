@@ -70,10 +70,16 @@ const WELCOME = {
   en: (n) => `⚡ <b>${n}</b>, welcome!\n\nTop up your balance — fast and cheap game top-ups 👇`,
 };
 const OPEN = { uz: "⚡ Do'konni ochish", ru: "⚡ Открыть магазин", en: "⚡ Open shop" };
+const NOAPP = {
+  uz: "⚠️ Do'kon hozircha ochilmayapti. Texnik ishlar olib borilmoqda — birozdan so'ng /start bosing.",
+  ru: "⚠️ Магазин временно недоступен. Идут технические работы — нажмите /start чуть позже.",
+  en: "⚠️ The shop is temporarily unavailable. Please press /start again a bit later.",
+};
 async function sendWelcome(ctx, lang) {
   const l = WELCOME[lang] ? lang : "uz";
   const kb = WEBAPP_URL ? Markup.inlineKeyboard([[Markup.button.webApp(OPEN[l], WEBAPP_URL)]]) : undefined;
   await ctx.reply(WELCOME[l](esc(ctx.from.first_name)), { parse_mode: "HTML", ...(kb || {}) });
+  if (!WEBAPP_URL) await ctx.reply(NOAPP[l]);
   if (isAdmin(ctx.from.id)) await ctx.reply("🛠 Admin panel pastda", Markup.keyboard([["🛠 Admin"]]).resize());
   else await ctx.reply("👆", Markup.removeKeyboard()).then((m) => ctx.deleteMessage(m.message_id)).catch(() => {});
 }
