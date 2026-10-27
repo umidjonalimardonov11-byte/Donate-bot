@@ -37,7 +37,7 @@ const T = {
     err: "Xatolik yuz berdi", oos: "Tugagan", fill: "Avval ID kiriting",
     copied: "Nusxa olindi", first_bonus: "1-to'ldirish bonusi",
     done: "Bajarildi", fail: "Qaytarildi", wait: "Kutilmoqda", confirm: "Tasdiqlaysizmi?",
-    total: "Jami", fast: "1–3 daqiqa", welcome: "Xush kelibsiz"
+    total: "Jami", fast: "1–3 daqiqa", welcome: "Xush kelibsiz", special: "Maxsus xizmatlar", notfound: "Topilmadi"
   },
   ru: {
     home: "Главная", shop: "Магазин", history: "История", profile: "Профиль",
@@ -57,7 +57,7 @@ const T = {
     err: "Произошла ошибка", oos: "Нет в наличии", fill: "Сначала введите ID",
     copied: "Скопировано", first_bonus: "Бонус 1-го пополнения",
     done: "Выполнен", fail: "Возврат", wait: "Ожидание", confirm: "Подтвердить?",
-    total: "Итого", fast: "1–3 минуты", welcome: "Добро пожаловать"
+    total: "Итого", fast: "1–3 минуты", welcome: "Добро пожаловать", special: "Спецуслуги", notfound: "Не найдено"
   },
   en: {
     home: "Home", shop: "Shop", history: "History", profile: "Profile",
@@ -77,7 +77,7 @@ const T = {
     err: "An error occurred", oos: "Out of stock", fill: "Please enter ID first",
     copied: "Copied", first_bonus: "1st recharge bonus",
     done: "Completed", fail: "Refunded", wait: "Pending", confirm: "Confirm?",
-    total: "Total", fast: "1–3 mins", welcome: "Welcome"
+    total: "Total", fast: "1–3 mins", welcome: "Welcome", special: "Special services", notfound: "Not found"
   }
 };
 
@@ -106,7 +106,7 @@ async function apiFetch(path, opts = {}) {
 }
 const post = (p, body) => apiFetch(p, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
 
-const store = { me: null, games: null, cat: "games", q: "" };
+const store = { me: null, games: null, cat: "all", q: "" };
 
 const skel = (n = 4) => `<div class="grid">${Array(n).fill('<div class="skel-card"></div>').join("")}</div>`;
 
@@ -146,12 +146,13 @@ $("#langBtn").addEventListener("click", () => {
 
 // Game card component
 function gameCard(g) {
-  const isTop = g.top || g.name.toLowerCase().includes("mobile") || g.name.toLowerCase().includes("free fire") || g.name.toLowerCase().includes("pubg");
+  const isTop = g.kind !== "other" && g.top;
+  const isNew = g.kind === "other";
   const serverText = g.servers_count ? L().servers_tag(g.servers_count) : "Top-up";
-  const priceDisplay = g.min_price ? L().from_price(fmt(g.min_price)) : "700 so'm dan";
+  const priceDisplay = g.min_price ? L().from_price(fmt(g.min_price)) : "";
   return `
     <div class="gcard" data-slug="${esc(g.slug)}">
-      ${isTop ? `<div class="gcard-top-badge">TOP</div>` : ""}
+      ${isTop ? `<div class="gcard-top-badge">TOP</div>` : isNew ? `<div class="gcard-top-badge">NEW</div>` : ""}
       <div class="gcard-img-wrap">
         ${g.image 
           ? `<img class="gcard-img" src="${esc(g.image)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;gcard-placeholder&quot;>🎮</div>'" />`
@@ -159,7 +160,7 @@ function gameCard(g) {
       </div>
       <div class="gcard-name">${esc(g.name)}</div>
       <div class="gcard-sub">${serverText}</div>
-      <div class="gcard-price">${priceDisplay}</div>
+      ${priceDisplay ? `<div class="gcard-price">${priceDisplay}</div>` : ""}
       <div class="gcard-time">⏱ ${L().fast}</div>
     </div>`;
 }
@@ -214,7 +215,13 @@ async function renderShop() {
     let g = store.games.filter((x) => x.name.toLowerCase().includes(q));
     if (store.cat === "services") g = g.filter((x) => x.kind === "other");
     else if (store.cat === "games") g = g.filter((x) => x.kind !== "other");
-    $("#list").innerHTML = g.length ? `<div class="grid">${g.map(gameCard).join("")}</div>` : `<div style="text-align:center;padding:40px;color:var(--muted)">Topilmadi</div>`;
+    let html;
+    if (store.cat === "all" && !q) {
+      const sv = g.filter((x) => x.kind === "other"), gm = g.filter((x) => x.kind !== "other");
+      html = (sv.length ? `<div class="h2">${L().special}</div><div class="grid">${sv.map(gameCard).join("")}</div>` : "") +
+        `<div class="h2">${L().games}</div><div class="grid">${gm.map(gameCard).join("")}</div>`;
+    } else html = g.length ? `<div class="grid">${g.map(gameCard).join("")}</div>` : "";
+    $("#list").innerHTML = html || `<div style="text-align:center;padding:40px;color:var(--muted)">${L().notfound}</div>`;
     bindGames();
   };
 
@@ -287,14 +294,17 @@ async function openGame(slug) {
 
       <div class="h2">${L().packs}</div>
       <div class="offers-grid">
-        ${g.offers.map((o, idx) => {
-          const isBonus = idx < 4 || o.name.includes("+");
+        ${g.offers.map((o) => {
+          const m = String(o.name).match(/^\s*([\d\s.,]+(?:\s*\+\s*[\d.,]+)?)\s*(.*)$/);
+          const big = m ? m[1].replace(/\s*\+\s*/, " + ").trim() : o.name;
+          const sub = m ? m[2].trim() : "";
+          const first = /first|1st|перв/i.test(o.name);
           return `
             <button class="offer-card ${st.offer?.id === o.id ? "on" : ""} ${o.stock === 0 ? "off" : ""}" data-o="${esc(o.id)}">
-              ${isBonus ? `<div class="offer-ribbon">First Recharge</div>` : ""}
-              <div class="offer-diamond">💎</div>
-              <div class="offer-amount">${esc(o.name)}</div>
-              <div class="offer-sub">${isBonus ? L().first_bonus : "Diamonds"}</div>
+              ${first ? `<div class="offer-ribbon">First Recharge</div>` : ""}
+              ${o.image || g.image ? `<img class="offer-img" src="${esc(o.image || g.image)}" alt="" loading="lazy" style="width:56px;height:56px;object-fit:contain;margin:0 auto 6px;display:block;border-radius:10px" />` : `<div class="offer-diamond">💎</div>`}
+              <div class="offer-amount">${esc(big)}</div>
+              ${sub ? `<div class="offer-sub">${esc(sub)}</div>` : ""}
               <div class="offer-price">${o.stock === 0 ? L().oos : `${fmt(o.price)} ${L().som}`}</div>
             </button>`;
         }).join("")}

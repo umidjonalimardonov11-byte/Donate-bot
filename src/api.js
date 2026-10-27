@@ -32,7 +32,7 @@ async function call(path, { method = "GET", body, headers = {} } = {}) {
 
 export const api = {
   balance: () => call("/balance"),
-  categories: (page = 1) => call(`/categories?type=topup&page=${page}`),
+  categories: (page = 1, type = "topup") => call(`/categories?${type ? `type=${type}&` : ""}page=${page}`),
   offers: (slug) => call(`/categories/${encodeURIComponent(slug)}/offers`),
   validateId: (slug, fields) => call(`/categories/${encodeURIComponent(slug)}/validate-id`, { method: "POST", body: { fields } }),
   createOrder: (offer_id, fields, idemKey, qty) =>

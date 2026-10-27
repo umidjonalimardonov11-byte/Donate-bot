@@ -56,9 +56,17 @@ export function setupWebapp(app, d) {
 
   async function allGames() {
     return cached("allgames", async () => {
-      const first = await api.categories(1);
-      let items = [...(first.items || [])];
-      for (let p = 2; p <= (first.pages || 1) && p <= 30; p++) items = items.concat((await api.categories(p)).items || []);
+      const fetchAll = async (type) => {
+        const first = await api.categories(1, type);
+        let it = [...(first.items || [])];
+        for (let p = 2; p <= (first.pages || 1) && p <= 30; p++) it = it.concat((await api.categories(p, type)).items || []);
+        return it;
+      };
+      let items = await fetchAll("topup");
+      const seen = new Set(items.map((c) => c.slug));
+      for (const t of ["", "voucher", "giftcard", "service"]) {
+        try { for (const c of await fetchAll(t)) if (!seen.has(c.slug)) { seen.add(c.slug); items.push(c); } } catch {}
+      }
       const counts = (await q("SELECT game, count(*)::int n FROM orders GROUP BY game")).rows;
       const cnt = Object.fromEntries(counts.map((r) => [r.game, r.n]));
       return items
@@ -78,7 +86,21 @@ export function setupWebapp(app, d) {
           if (!grp.image && g.image) grp.image = g.image;
           return acc;
         }, { map: new Map(), list: [] }).list
-        .map((g) => ({ ...g, servers_count: g.variants.length > 1 ? g.variants.length : 0 }));
+        .map((g) => ({ ...g, servers_count: g.variants.length > 1 ? g.variants.length : 0, variants: g.variants.sort((a, b) => (a.label === "Global" ? -1 : b.label === "Global" ? 1 : a.label.localeCompare(b.label))) }));
+    }).then(async (list) => {
+      // eng kichik narx ("... so'm dan") — mashhur o'yinlar va xizmatlar uchun
+      const { rate, markup } = await pricing();
+      const need = list.filter((g) => g.min_price === undefined && (g.kind === "other" || g.rank < 999 || list.indexOf(g) < 40));
+      for (let i = 0; i < need.length; i += 6) {
+        await Promise.all(need.slice(i, i + 6).map(async (g) => {
+          try {
+            const d = await cached(`off:${g.variants[0].slug}`, () => api.offers(g.variants[0].slug));
+            const ps = (d.offers || []).filter((o) => o.stock !== 0).map((o) => Number(o.price_usd)).filter((x) => x > 0);
+            g.min_price = ps.length ? priceUzs(Math.min(...ps), rate, markup) : null;
+          } catch { g.min_price = null; }
+        }));
+      }
+      return list;
     });
   }
 
