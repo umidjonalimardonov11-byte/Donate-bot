@@ -6,7 +6,7 @@ import { api, ApiError, parseOrder, DONE, FAILED } from "./api.js";
 import { t, ALL_MENU } from "./i18n.js";
 import { setupWebapp } from "./webapp.js";
 
-const WEBAPP_URL = process.env.WEBAPP_URL || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : "");
+const WEBAPP_URL = process.env.WEBAPP_URL || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : "https://donate-bot-production-483b.up.railway.app");
 
 for (const k of ["BOT_TOKEN", "ARCADEZY_API_KEY", "DATABASE_URL", "ADMIN_IDS"]) {
   if (!process.env[k]) { console.error(`${k} o'rnatilmagan!`); process.exit(1); }
@@ -65,11 +65,11 @@ bot.use(async (ctx, next) => {
 });
 
 const WELCOME = {
-  uz: (n) => `⚡ <b>${n}</b>, xush kelibsiz!\n\nBalansingizni to'ldiring — o'yinlarga donatni tez va arzon oling 👇`,
-  ru: (n) => `⚡ <b>${n}</b>, добро пожаловать!\n\nПополните баланс — донат в игры быстро и выгодно 👇`,
-  en: (n) => `⚡ <b>${n}</b>, welcome!\n\nTop up your balance — fast and cheap game top-ups 👇`,
+  uz: (n) => `🔥 <b>Olovpay'ga xush kelibsiz!</b>\n\nBalansingizni to'ldiring — o'yin to'ldirish, Telegram Stars va Premium'ni tez oling 👇`,
+  ru: (n) => `🔥 <b>Добро пожаловать в Olovpay!</b>\n\nПополните баланс — пополнение игр, Telegram Stars и Premium быстро 👇`,
+  en: (n) => `🔥 <b>Welcome to Olovpay!</b>\n\nTop up your balance — quick game top-ups, Telegram Stars & Premium 👇`,
 };
-const OPEN = { uz: "⚡ Do'konni ochish", ru: "⚡ Открыть магазин", en: "⚡ Open shop" };
+const OPEN = { uz: "🔥 Olovpay'ni ochish", ru: "🔥 Открыть Olovpay", en: "🔥 Open Olovpay" };
 const NOAPP = {
   uz: "⚠️ Do'kon hozircha ochilmayapti. Texnik ishlar olib borilmoqda — birozdan so'ng /start bosing.",
   ru: "⚠️ Магазин временно недоступен. Идут технические работы — нажмите /start чуть позже.",
@@ -78,10 +78,14 @@ const NOAPP = {
 async function sendWelcome(ctx, lang) {
   const l = WELCOME[lang] ? lang : "uz";
   const kb = WEBAPP_URL ? Markup.inlineKeyboard([[Markup.button.webApp(OPEN[l], WEBAPP_URL)]]) : undefined;
-  await ctx.reply(WELCOME[l](esc(ctx.from.first_name)), { parse_mode: "HTML", ...(kb || {}) });
+  const banner = `${WEBAPP_URL}/banner.jpg`;
+  try {
+    await ctx.replyWithPhoto(banner, { caption: WELCOME[l](esc(ctx.from.first_name)), parse_mode: "HTML", ...(kb || {}) });
+  } catch {
+    await ctx.reply(WELCOME[l](esc(ctx.from.first_name)), { parse_mode: "HTML", ...(kb || {}) });
+  }
   if (!WEBAPP_URL) await ctx.reply(NOAPP[l]);
   if (isAdmin(ctx.from.id)) await ctx.reply("🛠 Admin panel pastda", Markup.keyboard([["🛠 Admin"]]).resize());
-  else await ctx.reply("👆", Markup.removeKeyboard()).then((m) => ctx.deleteMessage(m.message_id)).catch(() => {});
 }
 
 bot.start(async (ctx) => {
@@ -538,7 +542,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("HTTP port", PORT));
 setInterval(() => pollOrders().catch(console.error), 2 * 60e3);
 await bot.telegram.setMyCommands([{ command: "start", description: "Start" }]);
-if (WEBAPP_URL) await bot.telegram.setChatMenuButton({ menuButton: { type: "web_app", text: "Do'kon", web_app: { url: WEBAPP_URL } } }).catch(console.error);
+if (WEBAPP_URL) await bot.telegram.setChatMenuButton({ menuButton: { type: "web_app", text: "Open", web_app: { url: WEBAPP_URL } } }).catch(console.error);
 else console.warn("WEBAPP_URL yo'q — Railway'da Generate Domain qiling");
 bot.launch({ dropPendingUpdates: true });
 console.log("Bot ishga tushdi ✅");
