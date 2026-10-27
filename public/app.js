@@ -225,7 +225,8 @@ async function renderShop() {
 // ---------- Game Detail View ----------
 async function openGame(slug) {
   window.scrollTo(0, 0);
-  const g0 = store.games?.find((x) => x.slug === slug) || { name: slug };
+  const g0 = store.games?.find((x) => x.slug === slug || (x.variants || []).some((v) => v.slug === slug)) || { name: slug };
+  const variants = g0.variants && g0.variants.length > 1 ? g0.variants : [];
   view.innerHTML = `<div class="ghead"><button class="back-btn" id="bk">‹</button><div><h1>${esc(g0.name)}</h1></div></div>${skel(4)}`;
   
   const goBack = () => { tg?.BackButton?.offClick(goBack); setTab(tab); };
@@ -242,7 +243,7 @@ async function openGame(slug) {
   optFields.forEach((f) => (st.values[f.key] = f.options[0]?.value));
 
   // Default mock regions if game has no specific option field
-  const defaultRegions = optFields.length ? [] : ["CIS", "Global", "BR", "ID", "PK"];
+  const defaultRegions = [];
   let selectedRegion = defaultRegions[0] || "";
 
   const draw = () => {
@@ -252,18 +253,20 @@ async function openGame(slug) {
         <button class="back-btn" id="bk">‹</button>
         ${g.image ? `<img class="gcard-img" style="width:52px;height:52px" src="${esc(g.image)}" alt="" />` : '<div class="gcard-placeholder" style="width:52px;height:52px">🎮</div>'}
         <div>
-          <h1>${esc(g.name)}</h1>
+          <h1>${esc(g0.variants ? g0.name : g.name)}</h1>
           <div class="ghead-sub">O'yin • Top-up</div>
           <div class="badge-time">⏱ ${L().fast}</div>
         </div>
       </div>
 
-      <div class="box-label" style="margin-top:14px">${L().choose_server}</div>
+      ${variants.length ? `<div class="box-label" style="margin-top:14px">${L().choose_server}</div>
+      <div class="pills">${variants.map((v) => `<button class="pill var-pill ${v.slug === slug ? "on" : ""}" data-s="${esc(v.slug)}">${esc(v.label)}</button>`).join("")}</div>` : ""}
+      ${optFields.length ? `<div class="box-label" style="margin-top:14px">${variants.length ? esc(optFields[0].label || "") : L().choose_server}</div>
       <div class="pills">
         ${optFields.length
           ? optFields[0].options.map((o) => `<button class="pill ${st.values[optFields[0].key] === o.value ? "on" : ""}" data-f="${esc(optFields[0].key)}" data-v="${esc(o.value)}">${esc(o.label)}</button>`).join("")
-          : defaultRegions.map((r) => `<button class="pill reg-pill ${selectedRegion === r ? "on" : ""}" data-r="${r}">${r}</button>`).join("")}
-      </div>
+          : ""}
+      </div>` : ""}
 
       ${ok ? `
         <div class="box-ok">
@@ -309,6 +312,7 @@ async function openGame(slug) {
 
     $("#bk").onclick = goBack;
     view.querySelectorAll(".pill[data-f]").forEach((p) => p.onclick = () => { st.values[p.dataset.f] = p.dataset.v; st.verified = null; haptic(); draw(); });
+    view.querySelectorAll(".var-pill").forEach((p) => p.onclick = () => { if (p.dataset.s !== slug) { haptic(); tg?.BackButton?.offClick(goBack); openGame(p.dataset.s); } });
     view.querySelectorAll(".reg-pill").forEach((p) => p.onclick = () => { selectedRegion = p.dataset.r; haptic(); draw(); });
     view.querySelectorAll(".inp").forEach((i) => i.oninput = () => {
       const k = i.dataset.k || "player_id";

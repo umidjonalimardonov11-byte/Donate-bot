@@ -64,7 +64,21 @@ export function setupWebapp(app, d) {
       return items
         .map((c) => ({ slug: c.slug, name: c.name, image: imgOf(c), kind: /telegram|stars|premium|steam|gift|card|spotify|netflix|discord|apple|itunes|google play|chatgpt|youtube|xbox|playstation|psn|nitro|wallet|voucher|подар|карт/i.test(c.name) ? "other" : "game", orders: cnt[c.name] || 0, rank: popRank(c.name) }))
         .sort((a, b) => a.rank - b.rank || b.orders - a.orders || a.name.localeCompare(b.name))
-        .map((g, i) => ({ ...g, top: g.rank < 999 || g.orders > 0 ? i < 6 : false }));
+        .map((g, i) => ({ ...g, top: g.rank < 999 || g.orders > 0 ? i < 6 : false }))
+        .reduce((acc, g) => {
+          const m = String(g.name).match(/^(.*?)\s*(?:\(([^)]*)\)|\[([^\]]*)\]|\s[-–—|]\s+(.+))\s*$/);
+          const base = (m ? m[1] : g.name).trim() || g.name;
+          const label = m ? (m[2] || m[3] || m[4] || "Global").trim() : "Global";
+          const key = base.toLowerCase();
+          let grp = acc.map.get(key);
+          if (!grp) { grp = { ...g, name: base, variants: [] }; acc.map.set(key, grp); acc.list.push(grp); }
+          grp.variants.push({ slug: g.slug, label });
+          grp.orders = Math.max(grp.orders, g.orders);
+          grp.top = grp.top || g.top;
+          if (!grp.image && g.image) grp.image = g.image;
+          return acc;
+        }, { map: new Map(), list: [] }).list
+        .map((g) => ({ ...g, servers_count: g.variants.length > 1 ? g.variants.length : 0 }));
     });
   }
 
