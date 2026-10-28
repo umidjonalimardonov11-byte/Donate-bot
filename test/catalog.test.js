@@ -13,3 +13,11 @@ test('Stars Premium Steam Gifts remain separate other services',()=>{
 test('Mobile Legends Adventure is not a region',()=>{
  assert.equal(groupGames([{slug:'ml',name:'Mobile Legends'},{slug:'mla',name:'Mobile Legends Adventure'}]).length,2);
 });
+test('Roblox country codes go inside one Roblox card',()=>{
+ const g=groupGames(['Roblox','Roblox (AE)','Roblox (AU)','Roblox (MX)'].map(name=>({slug:name,name,kind:'game'})));
+ assert.equal(g.length,1);assert.deepEqual(g[0].variants.map(v=>v.region),['Global','AE','AU','MX']);
+});
+test('Steam Wallet regions go inside one Steam card',()=>{
+ const g=groupGames(['Steam Wallet (US)','Steam Wallet (TR)','Telegram Stars'].map(name=>({slug:name,name,kind:'other'})));
+ assert.equal(g.length,2);assert.equal(g[0].name,'Steam');assert.deepEqual(g[0].variants.map(v=>v.region),['US','TR']);
+});

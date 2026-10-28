@@ -2,12 +2,37 @@ const tg = window.Telegram?.WebApp;
 tg?.ready(); tg?.expand();
 try { tg?.setHeaderColor("#121110"); tg?.setBackgroundColor("#121110"); } catch {}
 
+const ICON = {
+  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
+  gift: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8c-2-4-6-4-6-1.5S10 8 12 8zm0 0c2-4 6-4 6-1.5S14 8 12 8z"/></svg>',
+  wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg>',
+  head: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg>',
+  user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg>',
+  crown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 7l4.5 4L12 5l4.5 6L21 7l-2 11H5z"/></svg>',
+  chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>',
+  bolt: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
+  star: '<svg viewBox="0 0 24 24"><path fill="#fbbf24" d="M12 2l3 7 7 .6-5.3 4.7 1.6 7.2L12 17.8 5.7 21.5l1.6-7.2L2 9.6 9 9z"/></svg>',
+  starb: '<svg viewBox="0 0 24 24"><path fill="#818cf8" d="M12 2l3 7 7 .6-5.3 4.7 1.6 7.2L12 17.8 5.7 21.5l1.6-7.2L2 9.6 9 9z"/></svg>',
+  steam: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ea580c"/><circle cx="15" cy="9.5" r="3" fill="none" stroke="#1c1917" stroke-width="1.8"/><circle cx="9" cy="15.5" r="2.2" fill="#1c1917"/><path d="M4 13l5 2.5 4-4" stroke="#1c1917" stroke-width="1.8" fill="none"/></svg>',
+  pad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 10.5v4M5 12.5h4M16 12h.01M18 14h.01"/></svg>',
+};
+const SERVICE_SUB = { uz: { stars: "Hisobga yulduzlar", premium: "Obunani sovg'a qiling", steam: "Steam wallet to'ldirish", gift: "Telegram sovg'alari (gift)" }, ru: { stars: "Звёзды на аккаунт", premium: "Подарите подписку", steam: "Пополнение Steam", gift: "Подарки Telegram" }, en: { stars: "Stars to account", premium: "Gift a subscription", steam: "Steam wallet top-up", gift: "Telegram gifts" } };
+function serviceKey(name) { const n = String(name).toLowerCase(); return /stars/.test(n) ? "stars" : /premium/.test(n) ? "premium" : /steam/.test(n) ? "steam" : /gift/.test(n) ? "gift" : null; }
+function serviceIcon(name) { return ({ stars: ICON.star, premium: ICON.starb, steam: ICON.steam, gift: '<span class="ic-o">' + ICON.gift + '</span>' })[serviceKey(name)] || '<span class="ic-o">' + ICON.pad + '</span>'; }
+
 // Theme handler
 let currentTheme = localStorage.getItem("olov_theme") || "dark";
 document.documentElement.setAttribute("data-theme", currentTheme);
 function updateThemeIcon() {
   const btn = document.getElementById("themeBtn");
-  if (btn) btn.textContent = currentTheme === "dark" ? "☀️" : "🌙";
+  if (btn) btn.innerHTML = currentTheme === "dark" ? ICON.sun : ICON.moon;
 }
 updateThemeIcon();
 document.getElementById("themeBtn")?.addEventListener("click", () => {
@@ -37,7 +62,7 @@ const T = {
     err: "Xatolik yuz berdi", oos: "Tugagan", fill: "Avval ID kiriting",
     copied: "Nusxa olindi", first_bonus: "1-to'ldirish bonusi",
     done: "Bajarildi", fail: "Qaytarildi", wait: "Kutilmoqda", confirm: "Tasdiqlaysizmi?",
-    total: "Jami", fast: "1–3 daqiqa", welcome: "Xush kelibsiz", special: "Maxsus xizmatlar", notfound: "Topilmadi"
+    total: "Jami", fast: "1–3 daqiqa", welcome: "Xush kelibsiz", special: "Maxsus xizmatlar", notfound: "Topilmadi", your_balance: "Balansingiz", auto: "Avtomatik yetkazib berish", open_shop: "Do'konni ochish", open_shop_sub: "O'yinlar, gift kartalar va obunalar", topup_sub: "Karta orqali, tez tasdiqlanadi", pop_products: "Ommabop mahsulotlar", need_help: "Yordam kerakmi?", help_sub: "24/7 qo'llab-quvvatlash", txs: "Tranzaksiyalar", choose_amount: "Summani tanlang", other_amount: "Boshqa summa", min_note: "Minimal summa 3 000 so'm. To'lov tasdiqlangach, summa balansingizga tushadi.", cont: "Davom etish", ref_desc: "Do'stlaringizni taklif qiling va bonus oling.", your_link: "Sizning havolangiz", copy: "Nusxa olish", share: "Ulashish", notx: "Hali tranzaksiya yo'q", soon: "Tez orada qo'shiladi"
   },
   ru: {
     home: "Главная", shop: "Магазин", history: "История", profile: "Профиль",
@@ -57,7 +82,7 @@ const T = {
     err: "Произошла ошибка", oos: "Нет в наличии", fill: "Сначала введите ID",
     copied: "Скопировано", first_bonus: "Бонус 1-го пополнения",
     done: "Выполнен", fail: "Возврат", wait: "Ожидание", confirm: "Подтвердить?",
-    total: "Итого", fast: "1–3 минуты", welcome: "Добро пожаловать", special: "Спецуслуги", notfound: "Не найдено"
+    total: "Итого", fast: "1–3 минуты", welcome: "Добро пожаловать", special: "Спецуслуги", notfound: "Не найдено", your_balance: "Ваш баланс", auto: "Автоматическая доставка", open_shop: "Открыть магазин", open_shop_sub: "Игры, гифт-карты и подписки", topup_sub: "Картой, быстрое подтверждение", pop_products: "Популярное", need_help: "Нужна помощь?", help_sub: "Поддержка 24/7", txs: "Транзакции", choose_amount: "Выберите сумму", other_amount: "Другая сумма", min_note: "Минимум 3 000 сум. После подтверждения сумма поступит на баланс.", cont: "Продолжить", ref_desc: "Приглашайте друзей и получайте бонус.", your_link: "Ваша ссылка", copy: "Копировать", share: "Поделиться", notx: "Транзакций пока нет", soon: "Скоро"
   },
   en: {
     home: "Home", shop: "Shop", history: "History", profile: "Profile",
@@ -77,7 +102,7 @@ const T = {
     err: "An error occurred", oos: "Out of stock", fill: "Please enter ID first",
     copied: "Copied", first_bonus: "1st recharge bonus",
     done: "Completed", fail: "Refunded", wait: "Pending", confirm: "Confirm?",
-    total: "Total", fast: "1–3 mins", welcome: "Welcome", special: "Special services", notfound: "Not found"
+    total: "Total", fast: "1–3 mins", welcome: "Welcome", special: "Special services", notfound: "Not found", your_balance: "Your balance", auto: "Automatic delivery", open_shop: "Open shop", open_shop_sub: "Games, gift cards and subscriptions", topup_sub: "By card, fast approval", pop_products: "Popular products", need_help: "Need help?", help_sub: "24/7 support", txs: "Transactions", choose_amount: "Choose amount", other_amount: "Other amount", min_note: "Minimum 3 000 UZS. Amount is credited after approval.", cont: "Continue", ref_desc: "Invite friends and earn a bonus.", your_link: "Your link", copy: "Copy", share: "Share", notx: "No transactions yet", soon: "Coming soon"
   }
 };
 
@@ -122,7 +147,7 @@ async function loadGames() {
 }
 
 // Navigation
-let tab = "shop"; // Default to Shop tab as in screenshot
+let tab = "home";
 function setTab(t) {
   tab = t;
   document.querySelectorAll(".tabbar button").forEach((b) => b.classList.toggle("on", b.dataset.tab === t));
@@ -148,24 +173,35 @@ $("#langBtn").addEventListener("click", () => {
 function gameCard(g) {
   const isTop = g.kind !== "other" && g.top;
   const isNew = g.kind === "other";
-  const serverText = g.servers_count ? L().servers_tag(g.servers_count) : "Top-up";
+  const sk = g.kind === "other" ? serviceKey(g.name) : null;
+  const sub = sk ? SERVICE_SUB[lang][sk] : g.servers_count ? L().servers_tag(g.servers_count) : "Top-up";
   const priceDisplay = g.min_price ? L().from_price(fmt(g.min_price)) : "";
+  const img = g.image && !(g.kind === "other" && sk)
+    ? `<img class="gcard-img" src="${esc(g.image)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;gcard-placeholder&quot;>🎮</div>'" />`
+    : `<div class="gcard-placeholder">${g.kind === "other" ? serviceIcon(g.name) : "🎮"}</div>`;
   return `
     <div class="gcard" data-slug="${esc(g.slug)}">
       ${isTop ? `<div class="gcard-top-badge">TOP</div>` : isNew ? `<div class="gcard-top-badge">NEW</div>` : ""}
-      <div class="gcard-img-wrap">
-        ${g.image 
-          ? `<img class="gcard-img" src="${esc(g.image)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;gcard-placeholder&quot;>🎮</div>'" />`
-          : `<div class="gcard-placeholder">🎮</div>`}
-      </div>
+      <div class="gcard-img-wrap">${img}</div>
       <div class="gcard-name">${esc(g.name)}</div>
-      <div class="gcard-sub">${serverText}</div>
-      ${priceDisplay ? `<div class="gcard-price">${priceDisplay}</div>` : ""}
-      <div class="gcard-time">⏱ ${L().fast}</div>
+      <div class="gcard-sub">${esc(sub)}</div>
+      <div class="gcard-foot">
+        ${priceDisplay ? `<div class="gcard-price">${priceDisplay}</div>` : ""}
+        <div class="gcard-time">${ICON.clock}${L().fast}</div>
+      </div>
     </div>`;
+}
+function miniCard(g) {
+  const img = g.image && g.kind !== "other" ? `<img src="${esc(g.image)}" alt="" loading="lazy" />` : `<div class="mini-ph">${g.kind === "other" ? serviceIcon(g.name) : "🎮"}</div>`;
+  return `<div class="gcard mini" data-slug="${esc(g.slug)}">${img}<div class="mini-name">${esc(g.name)}</div>${g.min_price ? `<div class="mini-price">${L().from_price(fmt(g.min_price))}</div>` : ""}</div>`;
 }
 function bindGames() {
   view.querySelectorAll(".gcard").forEach((c) => c.addEventListener("click", () => { haptic(); openGame(c.dataset.slug); }));
+}
+function openSupport() {
+  const me = store.me || {};
+  if (me.support) tg?.openTelegramLink?.("https://t.me/" + me.support.replace("@", ""));
+  else toast(L().soon);
 }
 
 // ---------- Home View ----------
@@ -173,18 +209,24 @@ async function renderHome() {
   const me = store.me;
   view.innerHTML = `
     <div class="hero">
-      <small>${L().welcome}, ${esc(me?.first_name || "")} 👋</small>
-      <div class="big">${fmt(me?.balance)} ${L().som}</div>
-      <button class="btn" id="hTop">＋ ${L().topup}</button>
+      <div class="hero-label">${L().your_balance}</div>
+      <div class="hero-big">${fmt(me?.balance)} <span>${L().som}</span></div>
+      <div class="hero-row"><button class="btn light" id="hTop">${ICON.plus} ${L().topup}</button><span class="hero-auto">${ICON.bolt} ${L().auto}</span></div>
     </div>
-    <div class="h2">${L().popular}<a id="seeAll">${L().shop} →</a></div>
-    <div id="pop">${skel(4)}</div>`;
-  $("#hTop").onclick = openTopup;
+    <button class="row-card accent" id="hShop"><span class="row-ic">${ICON.gift}</span><span class="row-txt"><b>${L().open_shop}</b><small>${L().open_shop_sub}</small></span><span class="row-ch">${ICON.chev}</span></button>
+    <button class="row-card" id="hTop2"><span class="row-ic">${ICON.wallet}</span><span class="row-txt"><b>${L().topup}</b><small>${L().topup_sub}</small></span><span class="row-ch">${ICON.chev}</span></button>
+    <div class="h2">${L().pop_products}<a id="seeAll">${L().all} ${ICON.chev}</a></div>
+    <div id="pop" class="hscroll">${'<div class="skel-card mini"></div>'.repeat(3)}</div>
+    <button class="row-card" id="hHelp"><span class="row-ic">${ICON.head}</span><span class="row-txt"><b>${L().need_help}</b><small>${L().help_sub}</small></span><span class="row-ch">${ICON.chev}</span></button>`;
+  $("#hTop").onclick = openTopup; $("#hTop2").onclick = openTopup;
+  $("#hShop").onclick = () => { haptic(); setTab("shop"); };
   $("#seeAll").onclick = () => setTab("shop");
+  $("#hHelp").onclick = openSupport;
   try {
     const g = await loadGames();
     if (tab !== "home") return;
-    $("#pop").innerHTML = `<div class="grid">${g.slice(0, 6).map(gameCard).join("")}</div>`;
+    const pick = [...g.filter((x) => x.kind !== "other").slice(0, 4), ...g.filter((x) => x.kind === "other").slice(0, 2)];
+    $("#pop").innerHTML = pick.map(miniCard).join("");
     bindGames();
   } catch { $("#pop").innerHTML = `<div class="empty">${L().err}</div>`; }
 }
@@ -194,7 +236,7 @@ async function renderShop() {
   view.innerHTML = `
     <div class="h1">${L().shop}</div>
     <div class="search">
-      <span class="search-icon">🔍</span>
+      <span class="search-icon">${ICON.search}</span>
       <input id="q" placeholder="${L().search}" value="${esc(store.q)}" />
     </div>
     <div class="pills">
@@ -234,7 +276,7 @@ async function openGame(slug) {
   window.scrollTo(0, 0);
   const g0 = store.games?.find((x) => x.slug === slug || (x.variants || []).some((v) => v.slug === slug)) || { name: slug };
   const variants = g0.variants && g0.variants.length > 1 ? g0.variants : [];
-  view.innerHTML = `<div class="ghead"><button class="back-btn" id="bk">‹</button><div><h1>${esc(g0.name)}</h1></div></div>${skel(4)}`;
+  view.innerHTML = `<div class="ghead"><button class="back-btn" id="bk">${ICON.back}</button><div><h1>${esc(g0.name)}</h1></div></div>${skel(4)}`;
   
   const goBack = () => { tg?.BackButton?.offClick(goBack); setTab(tab); };
   tg?.BackButton?.show(); tg?.BackButton?.onClick(goBack);
@@ -257,12 +299,12 @@ async function openGame(slug) {
     const ok = st.verified;
     view.innerHTML = `
       <div class="ghead">
-        <button class="back-btn" id="bk">‹</button>
+        <button class="back-btn" id="bk">${ICON.back}</button>
         ${g.image ? `<img class="gcard-img" style="width:52px;height:52px" src="${esc(g.image)}" alt="" />` : '<div class="gcard-placeholder" style="width:52px;height:52px">🎮</div>'}
         <div>
           <h1>${esc(g0.variants ? g0.name : g.name)}</h1>
-          <div class="ghead-sub">O'yin • Top-up</div>
-          <div class="badge-time">⏱ ${L().fast}</div>
+          <div class="ghead-sub">${g0.kind === "other" ? (SERVICE_SUB[lang][serviceKey(g0.name)] || "Top-up") : "Top-up"}</div>
+          <div class="badge-time">${ICON.clock} ${L().fast}</div>
         </div>
       </div>
 
@@ -375,82 +417,67 @@ async function openGame(slug) {
 }
 
 // ---------- History View ----------
-async function renderHistory() {
-  view.innerHTML = `<div class="h1">${L().history}</div><div id="h">${skel(2)}</div>`;
+const ST = (s) => ({ done: L().done, approved: L().done, failed: L().fail, rejected: L().fail }[s] || L().wait);
+const STC = (s) => (["done", "approved"].includes(s) ? "ok" : ["failed", "rejected"].includes(s) ? "bad" : "wait");
+async function renderHistory(sub = store.hsub || "orders") {
+  store.hsub = sub;
+  view.innerHTML = `<div class="h1">${L().history}</div>
+    <div class="seg"><button class="${sub === "orders" ? "on" : ""}" data-h="orders">${L().orders}</button><button class="${sub === "tx" ? "on" : ""}" data-h="tx">${L().txs}</button></div>
+    <div id="h">${'<div class="skel-row"></div>'.repeat(3)}</div>`;
+  view.querySelectorAll(".seg button").forEach((b) => b.onclick = () => { haptic(); renderHistory(b.dataset.h); });
   try {
     const { orders, topups } = await apiFetch("/api/history");
+    if (tab !== "history") return;
     let html = "";
-    if (orders?.length) {
-      html += `<div class="h2">${L().orders}</div>`;
-      html += orders.map((o) => `
-        <div class="box" style="margin-bottom:10px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <b>#${o.id} · ${esc(o.game)}</b>
-            <span style="font-size:12px;font-weight:800;color:${o.status === "done" ? "var(--success)" : o.status === "failed" ? "var(--danger)" : "var(--orange)"}">${o.status}</span>
-          </div>
-          <div style="font-size:13px;color:var(--muted);margin-top:4px">${esc(o.offer_name)} · ${fmt(o.price)} ${L().som}</div>
-        </div>`).join("");
-    }
-    if (topups?.length) {
-      html += `<div class="h2" style="margin-top:20px">${L().topup}</div>`;
-      html += topups.map((t) => `
-        <div class="box" style="margin-bottom:10px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <b>+${fmt(t.amount)} ${L().som}</b>
-            <span style="font-size:12px;font-weight:800;color:${t.status === "approved" ? "var(--success)" : t.status === "rejected" ? "var(--danger)" : "var(--orange)"}">${t.status}</span>
-          </div>
-        </div>`).join("");
-    }
-    $("#h").innerHTML = html || `<div style="text-align:center;padding:40px;color:var(--muted)">${L().noorders}</div>`;
+    if (sub === "orders") html = (orders || []).map((o) => `
+      <div class="hrow"><div class="hrow-main"><b>${esc(o.game)}</b><small>#${o.id} · ${esc(o.offer_name)}</small></div>
+      <div class="hrow-side"><b>${fmt(o.price)} ${L().som}</b><span class="st ${STC(o.status)}">${ST(o.status)}</span></div></div>`).join("");
+    else html = (topups || []).map((t) => `
+      <div class="hrow"><div class="hrow-main"><b>${L().topup}</b><small>${t.created_at ? esc(new Date(t.created_at).toLocaleString()) : ""}</small></div>
+      <div class="hrow-side"><b class="plus">+${fmt(t.amount)} ${L().som}</b><span class="st ${STC(t.status)}">${ST(t.status)}</span></div></div>`).join("");
+    $("#h").innerHTML = html || `<div class="empty">${sub === "orders" ? L().noorders : L().notx}</div>`;
   } catch { $("#h").innerHTML = `<div class="empty">${L().err}</div>`; }
 }
 
 // ---------- Profile View ----------
 async function renderProfile() {
   const me = await loadMe().catch(() => store.me);
-  if (!me) return;
+  if (!me) { view.innerHTML = `<div class="empty">${L().err}</div>`; return; }
   const displayName = me.first_name || "Mijoz";
   view.innerHTML = `
     <div class="profile-head">
-      ${me.photo_url
-        ? `<img class="profile-avatar" src="${esc(me.photo_url)}" alt="" />`
-        : `<div class="profile-avatar">🔥</div>`}
-      <div class="profile-name">❖ ${esc(displayName)} ❖</div>
+      ${me.photo_url ? `<img class="profile-avatar" src="${esc(me.photo_url)}" alt="" />` : `<div class="profile-avatar">${esc(displayName.slice(0, 1).toUpperCase())}</div>`}
+      <div class="profile-name">${esc(displayName)}</div>
       ${me.username ? `<div class="profile-username">@${esc(me.username)}</div>` : ""}
-      <button class="profile-idchip" id="cid">ID: ${esc(me.id)} 📋</button>
+      <button class="profile-idchip" id="cid">ID: ${esc(me.id)} ${ICON.copy}</button>
     </div>
-
     <div class="balance-card">
-      <div>
-        <div class="balance-label">${L().balance}</div>
-        <div class="balance-val">${fmt(me.balance)} ${L().som}</div>
-      </div>
-      <button class="balance-topup-btn" id="pTop" title="${L().topup}">💳</button>
+      <div><div class="balance-label">${L().balance}</div><div class="balance-val">${fmt(me.balance)} ${L().som}</div></div>
+      <button class="balance-topup-btn" id="pTop" title="${L().topup}">${ICON.wallet}</button>
     </div>
-
     <div class="menu-list">
-      <button class="menu-item" id="mSup">
-        <div class="menu-item-left"><span class="menu-item-icon">🎧</span>${L().support}</div>
-        <span class="menu-item-arrow">›</span>
-      </button>
-      <button class="menu-item" id="mRef">
-        <div class="menu-item-left"><span class="menu-item-icon">👤</span>${L().referral}</div>
-        <span class="menu-item-arrow">›</span>
-      </button>
-      <button class="menu-item" id="mRes">
-        <div class="menu-item-left"><span class="menu-item-icon">👑</span>${L().resellers}</div>
-        <span class="menu-item-arrow">›</span>
-      </button>
+      <button class="menu-item" id="mSup"><div class="menu-item-left"><span class="menu-item-icon">${ICON.head}</span>${L().support}</div><span class="menu-item-arrow">${ICON.chev}</span></button>
+      <button class="menu-item" id="mRef"><div class="menu-item-left"><span class="menu-item-icon">${ICON.user}</span>${L().referral}</div><span class="menu-item-arrow">${ICON.chev}</span></button>
+      <button class="menu-item" id="mRes"><div class="menu-item-left"><span class="menu-item-icon">${ICON.crown}</span>${L().resellers}</div><span class="menu-item-arrow">${ICON.chev}</span></button>
     </div>`;
-
   $("#cid").onclick = () => { navigator.clipboard?.writeText(me.id); toast(L().copied); };
   $("#pTop").onclick = openTopup;
-  $("#mSup").onclick = () => {
-    if (me.support) tg?.openTelegramLink?.("https://t.me/" + me.support.replace("@", ""));
-    else toast("Tez orada qo'shiladi");
-  };
-  $("#mRef").onclick = () => toast("Referal: Do'stlaringizni taklif qilib 1% bonus oling!");
-  $("#mRes").onclick = () => toast("Resellerlar uchun maxsus narxlar!");
+  $("#mSup").onclick = openSupport;
+  $("#mRef").onclick = () => { haptic(); renderReferral(me); };
+  $("#mRes").onclick = openSupport;
+}
+function renderReferral(me) {
+  const link = me.bot_username ? `https://t.me/${me.bot_username}?start=ref_${me.id}` : "";
+  const goBack = () => { tg?.BackButton?.offClick(goBack); renderProfile(); tg?.BackButton?.hide(); };
+  tg?.BackButton?.show(); tg?.BackButton?.onClick(goBack);
+  view.innerHTML = `
+    <div class="ghead"><button class="back-btn" id="bk">${ICON.back}</button><h1 class="h1 r">${L().referral}</h1></div>
+    <p class="lead">${L().ref_desc}</p>
+    <div class="box"><div class="box-label">${L().your_link}</div><div class="linkbox">${esc(link)}</div>
+      <div class="two"><button class="btn ghost" id="rc">${ICON.copy} ${L().copy}</button><button class="btn" id="rs">${L().share}</button></div></div>`;
+  $("#bk").onclick = goBack;
+  $("#rc").onclick = () => { navigator.clipboard?.writeText(link); toast(L().copied); };
+  $("#rs").onclick = () => tg?.openTelegramLink?.("https://t.me/share/url?url=" + encodeURIComponent(link));
 }
 
 // ---------- Top Up Modal Sheet ----------
@@ -458,49 +485,51 @@ function openTopup() {
   const me = store.me || {};
   const bg = document.createElement("div");
   bg.className = "sheet-bg";
-  bg.innerHTML = `<div class="sheet">
-    <div class="h2" style="margin-top:0">💳 ${L().topup}</div>
-    <div class="box-label">${L().amount}</div>
-    <input class="inp" id="amt" inputmode="numeric" placeholder="50 000" />
-    <div class="pills">${[20000, 50000, 100000, 200000].map((a) => `<button class="pill" data-a="${a}">${fmt(a)}</button>`).join("")}</div>
-    <div class="box-label">${L().pay_to}</div>
-    <div class="card-num"><span>${esc(me.card_number || "8600 •••• •••• ••••")}</span><button id="cc" style="color:var(--orange)">📋</button></div>
-    <div style="color:var(--muted);font-size:13px;margin-bottom:12px">${L().owner}: <b>${esc(me.card_owner || "ADMIN")}</b></div>
-    <label class="upload" id="up">${L().photo}<input type="file" accept="image/*" id="file" hidden /></label>
-    <button class="btn full" id="snd">${L().send}</button>
-  </div>`;
+  let amount = 50000;
+  const step1 = () => {
+    bg.innerHTML = `<div class="sheet"><div class="grab"></div>
+      <div class="sheet-head"><b>${L().topup}</b><button class="x" id="x">✕</button></div>
+      <div class="box-label">${L().choose_amount}</div>
+      <div class="amt-grid">${[10000, 25000, 50000, 100000, 200000].map((a) => `<button class="amt ${a === amount ? "on" : ""}" data-a="${a}"><b>${fmt(a)}</b><small>${L().som}</small></button>`).join("")}</div>
+      <div class="amt-inp"><input id="amt" inputmode="numeric" placeholder="${L().other_amount}" /><span>${L().som}</span></div>
+      <div class="note">${ICON.info}<span>${L().min_note}</span></div>
+      <button class="btn grad full" id="nx">${L().cont} — ${fmt(amount)} ${L().som}</button></div>`;
+    bg.querySelector("#x").onclick = () => bg.remove();
+    bg.querySelectorAll(".amt").forEach((p) => p.onclick = () => { amount = Number(p.dataset.a); haptic(); step1(); });
+    const inp = bg.querySelector("#amt");
+    inp.oninput = () => { const v = Number(inp.value.replace(/\D/g, "")); if (v) { amount = v; bg.querySelectorAll(".amt").forEach((x) => x.classList.remove("on")); bg.querySelector("#nx").textContent = `${L().cont} — ${fmt(amount)} ${L().som}`; } };
+    bg.querySelector("#nx").onclick = () => { if (amount < 3000) return toast(L().min_note, true); haptic(); step2(); };
+  };
+  const step2 = () => {
+    bg.innerHTML = `<div class="sheet"><div class="grab"></div>
+      <div class="sheet-head"><b>${fmt(amount)} ${L().som}</b><button class="x" id="x">✕</button></div>
+      <div class="box-label">${L().pay_to}</div>
+      <div class="card-num"><span>${esc(me.card_number || "8600 •••• •••• ••••")}</span><button id="cc">${ICON.copy}</button></div>
+      <div class="note"><span>${L().owner}: <b>${esc(me.card_owner || "ADMIN")}</b></span></div>
+      <label class="upload" id="up">${L().photo}<input type="file" accept="image/*" id="file" hidden /></label>
+      <button class="btn grad full" id="snd">${L().send}</button></div>`;
+    bg.querySelector("#x").onclick = () => bg.remove();
+    bg.querySelector("#cc").onclick = () => { navigator.clipboard?.writeText(String(me.card_number || "").replace(/\s/g, "")); toast(L().copied); };
+    let file = null;
+    bg.querySelector("#file").onchange = (e) => { file = e.target.files[0]; if (file) bg.querySelector("#up").innerHTML = `<img src="${URL.createObjectURL(file)}">`; };
+    bg.querySelector("#snd").onclick = async () => {
+      if (!file) return toast(L().photo, true);
+      const b = bg.querySelector("#snd"); b.disabled = true; b.textContent = "…";
+      try {
+        const r = await fetch("/api/topup?amount=" + amount, { method: "POST", headers: { "X-Init-Data": tg?.initData || "", "Content-Type": file.type || "image/jpeg" }, body: file });
+        if (!r.ok) throw new Error();
+        toast(L().sent); bg.remove(); store.hsub = "tx"; setTab("history");
+      } catch { toast(L().err, true); b.disabled = false; b.textContent = L().send; }
+    };
+  };
   document.body.appendChild(bg);
   bg.addEventListener("click", (e) => { if (e.target === bg) bg.remove(); });
-  const amt = bg.querySelector("#amt");
-  bg.querySelectorAll(".pill").forEach((p) => p.onclick = () => { amt.value = fmt(p.dataset.a); haptic(); });
-  bg.querySelector("#cc").onclick = () => { navigator.clipboard?.writeText(String(me.card_number || "").replace(/\s/g, "")); toast(L().copied); };
-  let file = null;
-  bg.querySelector("#file").onchange = (e) => {
-    file = e.target.files[0];
-    if (file) bg.querySelector("#up").innerHTML = `<img src="${URL.createObjectURL(file)}">`;
-  };
-  bg.querySelector("#snd").onclick = async () => {
-    const raw = Number(String(amt.value).replace(/\s/g, ""));
-    if (!raw || raw < 1000) return toast(L().fill, true);
-    if (!file) return toast(L().photo, true);
-    const b = bg.querySelector("#snd"); b.disabled = true; b.textContent = "…";
-    try {
-      const fd = new FormData();
-      fd.append("amount", raw);
-      fd.append("photo", file);
-      await fetch("/api/topup", {
-        method: "POST",
-        headers: { "X-Init-Data": tg?.initData || "", "X-Amount": String(raw) },
-        body: file,
-      });
-      toast(L().sent); bg.remove(); setTab("history");
-    } catch { toast(L().err, true); b.disabled = false; b.textContent = L().send; }
-  };
+  step1();
 }
 
 // Init
 (async function init() {
   applyLang();
   await loadMe();
-  setTab("shop");
+  setTab("home");
 })();

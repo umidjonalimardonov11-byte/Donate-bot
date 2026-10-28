@@ -12,13 +12,18 @@ const FAMILIES = [
   ['Roblox', /^roblox(?=$|\s|[-:(])/i],
   ['Valorant', /^valorant(?=$|\s|[-:(])/i],
 ];
-const REGION = /^(?:(?:global|worldwide|international|indonesia|indonesian|malaysia|singapore|philippines|brazil|turkey|russia|europe|usa|united states|vietnam|thailand|taiwan|hong kong|japan|korea|india|cambodia|myanmar|bangladesh|pakistan|mena|sea|cis|latam|na|eu|ru|id|br|tr|ph|sg|my|us|vn|th|tw|hk|jp|kr|in|bd|mm|kh|pk|all|other|region|server|servers|regions|only|except|excluding|exclusive|official|direct|top[ -]?up|diamonds|uc|instant|fast|slow|normal|discount|promo|special|double|bonus|weekly|monthly|pass|subscription|pack|packs|package|packages)\b|[\s,./&+()\[\]:–—-]|\d)+$/i;
+const REGION = /^(?:(?:global|worldwide|international|indonesia|indonesian|malaysia|singapore|philippines|brazil|turkey|russia|europe|usa|united states|vietnam|thailand|taiwan|hong kong|japan|korea|india|cambodia|myanmar|bangladesh|pakistan|mena|sea|cis|latam|na|eu|ru|id|br|tr|ph|sg|my|us|vn|th|tw|hk|jp|kr|in|bd|mm|kh|pk|all|other|region|server|servers|regions|only|except|excluding|exclusive|official|direct|top[ -]?up|diamonds|uc|instant|fast|slow|normal|discount|promo|special|double|bonus|weekly|monthly|pass|subscription|pack|packs|package|packages|[a-z]{2})\b|[\s,./&+()\[\]:–—-]|\d)+$/i;
 const OTHER = /telegram|stars|premium|steam|gift|card|spotify|netflix|discord|apple|itunes|google play|chatgpt|youtube|xbox|playstation|psn|nitro|wallet|voucher|подар|карт/i;
 
 export function identifyGame(item) {
   const name = String(item.name || item.slug || '').replace(/\s+/g, ' ').trim();
   const kind = item.kind || (OTHER.test(name) ? 'other' : 'game');
-  if (kind === 'other') return { key: `other:${item.slug}`, name, region: name, kind };
+  if (kind === 'other') {
+    // Regional Steam wallets (Steam Wallet (US), (TR) ...) live inside one Steam card.
+    const steam = name.match(/^steam(?:\s+wallet)?(?:\s*(?:\(([^)]+)\)|[-–—:]\s*(.+)))?$/i);
+    if (steam) return { key: 'other:steam', name: 'Steam', region: (steam[1] || steam[2] || 'Global').trim(), kind };
+    return { key: `other:${item.slug}`, name, region: name, kind };
+  }
   for (const [title, pattern] of FAMILIES) {
     const match = name.match(pattern);
     if (!match) continue;
