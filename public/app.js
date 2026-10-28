@@ -62,7 +62,15 @@ const T = {
     err: "Xatolik yuz berdi", oos: "Tugagan", fill: "Avval ID kiriting",
     copied: "Nusxa olindi", first_bonus: "1-to'ldirish bonusi",
     done: "Bajarildi", fail: "Qaytarildi", wait: "Kutilmoqda", confirm: "Tasdiqlaysizmi?",
-    total: "Jami", fast: "1–3 daqiqa", welcome: "Xush kelibsiz", special: "Maxsus xizmatlar", notfound: "Topilmadi", your_balance: "Balansingiz", auto: "Avtomatik yetkazib berish", open_shop: "Do'konni ochish", open_shop_sub: "O'yinlar, gift kartalar va obunalar", topup_sub: "Karta orqali, tez tasdiqlanadi", pop_products: "Ommabop mahsulotlar", need_help: "Yordam kerakmi?", help_sub: "24/7 qo'llab-quvvatlash", txs: "Tranzaksiyalar", choose_amount: "Summani tanlang", other_amount: "Boshqa summa", min_note: "Minimal summa 3 000 so'm. To'lov tasdiqlangach, summa balansingizga tushadi.", cont: "Davom etish", ref_desc: "Do'stlaringizni taklif qiling va bonus oling.", your_link: "Sizning havolangiz", copy: "Nusxa olish", share: "Ulashish", notx: "Hali tranzaksiya yo'q", soon: "Tez orada qo'shiladi"
+    total: "Jami", fast: "1–3 daqiqa", welcome: "Xush kelibsiz", special: "Maxsus xizmatlar", notfound: "Topilmadi", your_balance: "Balansingiz", auto: "Avtomatik yetkazib berish", open_shop: "Do'konni ochish", open_shop_sub: "O'yinlar, gift kartalar va obunalar", topup_sub: "Karta orqali, tez tasdiqlanadi", pop_products: "Ommabop mahsulotlar", need_help: "Yordam kerakmi?", help_sub: "24/7 qo'llab-quvvatlash", txs: "Tranzaksiyalar", choose_amount: "Summani tanlang", other_amount: "Boshqa summa", min_note: "Minimal summa 3 000 so'm. To'lov tasdiqlangach, summa balansingizga tushadi.", cont: "Davom etish", ref_desc: "Do'stlaringizni taklif qiling va bonus oling.", your_link: "Sizning havolangiz", copy: "Nusxa olish", share: "Ulashish", notx: "Hali tranzaksiya yo'q", soon: "Tez orada qo'shiladi",
+    tg_user: "Telegram username",
+    stars_hint: "Yulduzlar shu akkauntga yuboriladi",
+    premium_hint: "Obuna shu akkauntga yuboriladi",
+    choose_duration: "Muddatni tanlang",
+    choose_amount: "Miqdorni tanlang",
+    month_unit: "oy",
+    balance_low: "Balans yetarli emas — To'ldirish",
+    fill_username: "Avval Telegram username kiriting"
   },
   ru: {
     home: "Главная", shop: "Магазин", history: "История", profile: "Профиль",
@@ -82,7 +90,15 @@ const T = {
     err: "Произошла ошибка", oos: "Нет в наличии", fill: "Сначала введите ID",
     copied: "Скопировано", first_bonus: "Бонус 1-го пополнения",
     done: "Выполнен", fail: "Возврат", wait: "Ожидание", confirm: "Подтвердить?",
-    total: "Итого", fast: "1–3 минуты", welcome: "Добро пожаловать", special: "Спецуслуги", notfound: "Не найдено", your_balance: "Ваш баланс", auto: "Автоматическая доставка", open_shop: "Открыть магазин", open_shop_sub: "Игры, гифт-карты и подписки", topup_sub: "Картой, быстрое подтверждение", pop_products: "Популярное", need_help: "Нужна помощь?", help_sub: "Поддержка 24/7", txs: "Транзакции", choose_amount: "Выберите сумму", other_amount: "Другая сумма", min_note: "Минимум 3 000 сум. После подтверждения сумма поступит на баланс.", cont: "Продолжить", ref_desc: "Приглашайте друзей и получайте бонус.", your_link: "Ваша ссылка", copy: "Копировать", share: "Поделиться", notx: "Транзакций пока нет", soon: "Скоро"
+    total: "Итого", fast: "1–3 минуты", welcome: "Добро пожаловать", special: "Спецуслуги", notfound: "Не найдено", your_balance: "Ваш баланс", auto: "Автоматическая доставка", open_shop: "Открыть магазин", open_shop_sub: "Игры, гифт-карты и подписки", topup_sub: "Картой, быстрое подтверждение", pop_products: "Популярное", need_help: "Нужна помощь?", help_sub: "Поддержка 24/7", txs: "Транзакции", choose_amount: "Выберите сумму", other_amount: "Другая сумма", min_note: "Минимум 3 000 сум. После подтверждения сумма поступит на баланс.", cont: "Продолжить", ref_desc: "Приглашайте друзей и получайте бонус.", your_link: "Ваша ссылка", copy: "Копировать", share: "Поделиться", notx: "Транзакций пока нет", soon: "Скоро",
+    tg_user: "Telegram username",
+    stars_hint: "Звёзды будут отправлены на этот аккаунт",
+    premium_hint: "Подписка будет активирована на этот аккаунт",
+    choose_duration: "Выберите срок",
+    choose_amount: "Выберите количество",
+    month_unit: "мес",
+    balance_low: "Недостаточно средств — Пополнить",
+    fill_username: "Сначала введите Telegram username"
   },
   en: {
     home: "Home", shop: "Shop", history: "History", profile: "Profile",
@@ -102,7 +118,15 @@ const T = {
     err: "An error occurred", oos: "Out of stock", fill: "Please enter ID first",
     copied: "Copied", first_bonus: "1st recharge bonus",
     done: "Completed", fail: "Refunded", wait: "Pending", confirm: "Confirm?",
-    total: "Total", fast: "1–3 mins", welcome: "Welcome", special: "Special services", notfound: "Not found", your_balance: "Your balance", auto: "Automatic delivery", open_shop: "Open shop", open_shop_sub: "Games, gift cards and subscriptions", topup_sub: "By card, fast approval", pop_products: "Popular products", need_help: "Need help?", help_sub: "24/7 support", txs: "Transactions", choose_amount: "Choose amount", other_amount: "Other amount", min_note: "Minimum 3 000 UZS. Amount is credited after approval.", cont: "Continue", ref_desc: "Invite friends and earn a bonus.", your_link: "Your link", copy: "Copy", share: "Share", notx: "No transactions yet", soon: "Coming soon"
+    total: "Total", fast: "1–3 mins", welcome: "Welcome", special: "Special services", notfound: "Not found", your_balance: "Your balance", auto: "Automatic delivery", open_shop: "Open shop", open_shop_sub: "Games, gift cards and subscriptions", topup_sub: "By card, fast approval", pop_products: "Popular products", need_help: "Need help?", help_sub: "24/7 support", txs: "Transactions", choose_amount: "Choose amount", other_amount: "Other amount", min_note: "Minimum 3 000 UZS. Amount is credited after approval.", cont: "Continue", ref_desc: "Invite friends and earn a bonus.", your_link: "Your link", copy: "Copy", share: "Share", notx: "No transactions yet", soon: "Coming soon",
+    tg_user: "Telegram username",
+    stars_hint: "Stars will be sent to this account",
+    premium_hint: "Subscription will be gifted to this account",
+    choose_duration: "Select duration",
+    choose_amount: "Select amount",
+    month_unit: "mo",
+    balance_low: "Insufficient balance — Top up",
+    fill_username: "Please enter Telegram username first"
   }
 };
 
@@ -287,9 +311,288 @@ function offerArt(o, all) {
   const chest = count >= 5 ? `<rect x="10" y="40" width="44" height="16" rx="3" fill="#3b2a1e" stroke="#f2a33a" stroke-width="1.5"/><rect x="29" y="44" width="6" height="7" rx="1" fill="#f2a33a"/>` : "";
   return `<svg viewBox="0 0 64 64" class="art"><defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9be7ff"/><stop offset=".5" stop-color="#3fa9f5"/><stop offset="1" stop-color="#1e4fd8"/></linearGradient></defs><ellipse cx="32" cy="56" rx="22" ry="4" fill="#0004"/>${chest}${spots.slice(0, count).reverse().map(gem).join("")}</svg>`;
 }
+
+// ---------- Dedicated Telegram Stars & Premium View ----------
+async function openTelegramService(slug, type, g0) {
+  window.scrollTo(0, 0);
+  const isPremium = type === "premium";
+  const title = isPremium ? "Telegram Premium" : "Telegram Stars";
+
+  const goBack = () => { tg?.BackButton?.offClick(goBack); setTab(tab); };
+  tg?.BackButton?.show();
+  tg?.BackButton?.onClick(goBack);
+
+  view.innerHTML = `
+    <div class="ghead">
+      <button class="back-btn" id="bk">${ICON.back}</button>
+      <div>
+        <h1>${esc(title)}</h1>
+        <div class="ghead-sub">o'yinlar · gift kartalar · top-up</div>
+      </div>
+    </div>
+    ${skel(3)}
+  `;
+  $("#bk").onclick = goBack;
+
+  let g;
+  try {
+    g = await apiFetch("/api/games/" + encodeURIComponent(slug));
+  } catch {
+    const variants = g0.variants || [];
+    for (const v of variants) {
+      if (v.slug !== slug) {
+        try { g = await apiFetch("/api/games/" + encodeURIComponent(v.slug)); slug = v.slug; break; } catch {}
+      }
+    }
+  }
+
+  if (!g) {
+    view.innerHTML = `
+      <div class="ghead">
+        <button class="back-btn" id="bk">${ICON.back}</button>
+        <div><h1>${esc(title)}</h1><div class="ghead-sub">o'yinlar · gift kartalar · top-up</div></div>
+      </div>
+      <div class="empty">${L().err}<br><button class="btn" id="retry" style="margin-top:14px">↻</button></div>
+    `;
+    $("#bk").onclick = goBack;
+    $("#retry").onclick = () => openTelegramService(slug, type, g0);
+    return;
+  }
+
+  g.offers ||= [];
+  g.fields ||= [];
+
+  let offers = [...g.offers];
+  if (isPremium) {
+    offers.sort((a, b) => {
+      const ma = parseInt((String(a.name).match(/\d+/) || ["0"])[0]) || 0;
+      const mb = parseInt((String(b.name).match(/\d+/) || ["0"])[0]) || 0;
+      return (ma - mb) || (a.price - b.price);
+    });
+  } else {
+    offers.sort((a, b) => {
+      const ma = parseInt((String(a.name).match(/[\d.,]+/) || ["0"])[0].replace(/[.,]/g, "")) || 0;
+      const mb = parseInt((String(b.name).match(/[\d.,]+/) || ["0"])[0].replace(/[.,]/g, "")) || 0;
+      return (ma - mb) || (a.price - b.price);
+    });
+  }
+
+  // Fallback offers if API category has no offers returned yet
+  if (!offers.length) {
+    if (isPremium) {
+      offers = [
+        { id: "prem_3", name: "Telegram Premium 3 oy", price: 159300 },
+        { id: "prem_6", name: "Telegram Premium 6 oy", price: 212500 },
+        { id: "prem_12", name: "Telegram Premium 12 oy", price: 385200 },
+      ];
+    } else {
+      offers = [
+        { id: "stars_50", name: "50 Stars", price: 16500 },
+        { id: "stars_100", name: "100 Stars", price: 32000 },
+        { id: "stars_150", name: "150 Stars", price: 47000 },
+        { id: "stars_250", name: "250 Stars", price: 75000 },
+        { id: "stars_500", name: "500 Stars", price: 145000 },
+        { id: "stars_1000", name: "1000 Stars", price: 285000 },
+        { id: "stars_2500", name: "2500 Stars", price: 690000 },
+      ];
+    }
+  }
+
+  let currentUsername = tg?.initDataUnsafe?.user?.username ? ("@" + tg.initDataUnsafe.user.username) : "";
+  let selectedOffer = offers[0] || null;
+
+  function render() {
+    const userBalance = Number(store.me?.balance || 0);
+    const price = selectedOffer ? Number(selectedOffer.price || 0) : 0;
+    const canAfford = userBalance >= price;
+    const cleanU = currentUsername.trim();
+    const displayU = cleanU || "@username";
+
+    let planSummary = "";
+    if (selectedOffer) {
+      if (isPremium) {
+        const m = (String(selectedOffer.name).match(/\d+/) || [""])[0];
+        planSummary = m ? `${m} ${L().month_unit || "oy"}` : selectedOffer.name;
+      } else {
+        const m = (String(selectedOffer.name).match(/[\d.,]+/) || [""])[0].replace(/[.,]/g, "");
+        planSummary = m ? `${m} Stars` : selectedOffer.name;
+      }
+    }
+
+    view.innerHTML = `
+      <div class="ghead">
+        <button class="back-btn" id="bk">${ICON.back}</button>
+        <div>
+          <h1>${esc(title)}</h1>
+          <div class="ghead-sub">o'yinlar · gift kartalar · top-up</div>
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:10px">
+        <div class="box-label" style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700">
+          <span style="font-size:16px">👤</span> <span>${L().tg_user || "Telegram username"}</span>
+        </div>
+        <div style="position:relative;margin-top:8px">
+          <input class="inp" id="tgUsernameInp" placeholder="@username" value="${esc(currentUsername)}" style="font-size:16px;font-weight:600;padding-left:14px" />
+        </div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:8px;display:flex;align-items:center;gap:6px">
+          <span style="color:var(--orange);font-size:13px">ℹ️</span>
+          <span>${isPremium ? (L().premium_hint || "Obuna shu akkauntga yuboriladi") : (L().stars_hint || "Yulduzlar shu akkauntga yuboriladi")}</span>
+        </div>
+      </div>
+
+      <div class="h2" style="margin-top:20px;margin-bottom:6px">
+        ${isPremium ? (L().choose_duration || "Muddatni tanlang") : (L().choose_amount || "Miqdorni tanlang")}
+      </div>
+
+      ${isPremium ? `
+        <div class="tg-plans-grid">
+          ${offers.map((o) => {
+            const m = (String(o.name).match(/\d+/) || [""])[0];
+            const isSel = selectedOffer?.id === o.id;
+            return `
+              <button class="tg-plan-card ${isSel ? "on" : ""}" data-id="${esc(o.id)}">
+                <div class="tg-plan-dur">${esc(m || o.name)} <span class="tg-plan-unit">${L().month_unit || "oy"}</span></div>
+                <div class="tg-plan-price">${fmt(o.price)} ${L().som}</div>
+              </button>
+            `;
+          }).join("")}
+        </div>
+      ` : `
+        <div class="tg-stars-grid">
+          ${offers.map((o) => {
+            const m = (String(o.name).match(/[\d.,]+/) || [""])[0].replace(/[.,]/g, "");
+            const isSel = selectedOffer?.id === o.id;
+            return `
+              <button class="tg-star-card ${isSel ? "on" : ""}" data-id="${esc(o.id)}">
+                <div class="tg-star-icon">⭐</div>
+                <div class="tg-star-amt">${esc(m || o.name)}</div>
+                <div class="tg-star-label">Stars</div>
+                <div class="tg-star-price">${fmt(o.price)} ${L().som}</div>
+              </button>
+            `;
+          }).join("")}
+        </div>
+      `}
+
+      <div style="height:140px"></div>
+
+      <div class="tg-buybar">
+        <div class="tg-buybar-meta">
+          <span id="tgSumUser">${esc(displayU)}</span> · <span id="tgSumPlan">${esc(planSummary)}</span>
+        </div>
+        ${canAfford ? `
+          <button class="btn full" id="tgActionBtn" style="height:50px;font-size:15px;font-weight:800;border-radius:16px;background:var(--grad)">
+            ${L().buy} — ${fmt(price)} ${L().som}
+          </button>
+        ` : `
+          <button class="btn full" id="tgActionBtn" style="height:50px;font-size:14.5px;font-weight:800;border-radius:16px;background:linear-gradient(100deg,#f59e0b,#f2561d)">
+            ${L().balance_low || "Balans yetarli emas — To'ldirish"}
+          </button>
+        `}
+      </div>
+    `;
+
+    $("#bk").onclick = goBack;
+
+    const inp = $("#tgUsernameInp");
+    if (inp) {
+      inp.oninput = (e) => {
+        let val = e.target.value.trim();
+        if (val && !val.startsWith("@")) val = "@" + val;
+        currentUsername = val;
+        const sumUser = $("#tgSumUser");
+        if (sumUser) sumUser.textContent = val || "@username";
+      };
+    }
+
+    view.querySelectorAll(".tg-plan-card, .tg-star-card").forEach((card) => {
+      card.onclick = () => {
+        const id = card.dataset.id;
+        const o = offers.find((x) => String(x.id) === String(id));
+        if (o) {
+          selectedOffer = o;
+          haptic();
+          render();
+        }
+      };
+    });
+
+    const actBtn = $("#tgActionBtn");
+    if (actBtn) {
+      actBtn.onclick = async () => {
+        haptic();
+        if (!canAfford) {
+          return openTopup();
+        }
+        const userTrim = currentUsername.trim();
+        if (!userTrim || userTrim === "@") {
+          return toast(L().fill_username || "Telegram username kiriting", true);
+        }
+        const cleanUsername = userTrim.replace(/^@/, "");
+
+        const confirmMsg = `${title}\n${selectedOffer.name}\n@${cleanUsername}\n${L().total}: ${fmt(price)} ${L().som}\n\n${L().confirm}`;
+        const proceed = () => doOrder(cleanUsername);
+
+        if (tg?.showConfirm) {
+          tg.showConfirm(confirmMsg, (ok) => ok && proceed());
+        } else if (confirm(confirmMsg)) {
+          proceed();
+        }
+      };
+    }
+  }
+
+  async function doOrder(cleanUsername) {
+    const actBtn = $("#tgActionBtn");
+    if (actBtn) { actBtn.disabled = true; actBtn.textContent = "…"; }
+
+    const vals = {};
+    if (g.fields && g.fields.length) {
+      for (const f of g.fields) vals[f.key] = cleanUsername;
+    } else {
+      vals.username = cleanUsername;
+      vals.player_id = cleanUsername;
+    }
+
+    try {
+      await post("/api/order", {
+        slug,
+        offer_id: selectedOffer.id,
+        values: vals
+      });
+      toast(L().ok_order);
+      await loadMe();
+      setTab("history");
+    } catch (e) {
+      if (e.code === "NO_MONEY") {
+        toast(L().nomoney, true);
+        openTopup();
+      } else if (e.code === "OUT_OF_STOCK") {
+        toast(L().oos, true);
+      } else if (e.code === "FIELDS_INVALID") {
+        toast(L().invalid, true);
+      } else {
+        toast(L().err, true);
+      }
+      if (actBtn) {
+        actBtn.disabled = false;
+        render();
+      }
+    }
+  }
+
+  render();
+}
+
 async function openGame(slug) {
   window.scrollTo(0, 0);
   const g0 = store.games?.find((x) => x.slug === slug || (x.variants || []).some((v) => v.slug === slug)) || { name: slug };
+  const isTgStars = /stars/i.test(g0.name) || /stars/i.test(slug);
+  const isTgPremium = /premium/i.test(g0.name) || /premium/i.test(slug);
+  if (isTgStars || isTgPremium) {
+    return openTelegramService(slug, isTgPremium ? "premium" : "stars", g0);
+  }
   const variants = g0.variants && g0.variants.length > 1 ? g0.variants : [];
   view.innerHTML = `<div class="ghead"><button class="back-btn" id="bk">${ICON.back}</button><div><h1>${esc(g0.name)}</h1></div></div>${skel(4)}`;
   
