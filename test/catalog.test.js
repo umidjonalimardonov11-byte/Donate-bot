@@ -21,3 +21,7 @@ test('Steam Wallet regions go inside one Steam card',()=>{
  const g=groupGames(['Steam Wallet (US)','Steam Wallet (TR)','Telegram Stars'].map(name=>({slug:name,name,kind:'other'})));
  assert.equal(g.length,2);assert.equal(g[0].name,'Steam');assert.deepEqual(g[0].variants.map(v=>v.region),['US','TR']);
 });
+test('Garena Free Fire and Genshin packages join their game',()=>{
+ const g=groupGames(['Free Fire','Garena Free Fire','Genshin Impact','Genshin Impact Welkin Moon','PUBG Mobile Prime Plus','PUBG Mobile','PUBG: New State'].map(name=>({slug:name,name,kind:'game'})));
+ assert.deepEqual(g.map(x=>x.name),['Free Fire','Genshin Impact','PUBG Mobile','PUBG: New State']);
+});

@@ -272,6 +272,21 @@ async function renderShop() {
 }
 
 // ---------- Game Detail View ----------
+// Package pictures: bigger packs get a bigger pile of gems; passes get a card.
+function offerArt(o, all) {
+  const n = String(o.name);
+  if (/pass|membership|weekly|monthly|elite|welkin|prime|premium|plus|card|subscription/i.test(n) && !/^\s*\d/.test(n)) {
+    return `<svg viewBox="0 0 64 64" class="art"><defs><linearGradient id="pc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset="1" stop-color="#d4183d"/></linearGradient></defs><rect x="8" y="14" width="48" height="34" rx="7" fill="url(#pc)"/><rect x="8" y="22" width="48" height="6" fill="#0003"/><path d="M32 31l3 6 6 .8-4.5 4.2 1.2 6-5.7-3-5.7 3 1.2-6L23 37.8l6-.8z" fill="#fff"/></svg>`;
+  }
+  const amt = (x) => Number((String(x.name).match(/[\d.,]+/) || ["0"])[0].replace(/[.,]/g, "")) || 0;
+  const sorted = [...new Set(all.map(amt).filter(Boolean))].sort((a, b) => a - b);
+  const pos = sorted.length > 1 ? sorted.indexOf(amt(o)) / (sorted.length - 1) : 0;
+  const count = Math.max(1, Math.min(6, Math.round(1 + pos * 5)));
+  const spots = [[32,36],[20,42],[44,42],[26,26],[40,26],[32,48]];
+  const gem = ([x, y], i) => `<g transform="translate(${x - 10} ${y - 10})"><path d="M4 7l6-6h0l6 6-6 12z" transform="scale(1.1)" fill="url(#gm)" stroke="#bfe9ff" stroke-width=".6"/><path d="M4.4 7.7h13.2" stroke="#fff8" stroke-width=".8"/></g>`;
+  const chest = count >= 5 ? `<rect x="10" y="40" width="44" height="16" rx="3" fill="#3b2a1e" stroke="#f2a33a" stroke-width="1.5"/><rect x="29" y="44" width="6" height="7" rx="1" fill="#f2a33a"/>` : "";
+  return `<svg viewBox="0 0 64 64" class="art"><defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9be7ff"/><stop offset=".5" stop-color="#3fa9f5"/><stop offset="1" stop-color="#1e4fd8"/></linearGradient></defs><ellipse cx="32" cy="56" rx="22" ry="4" fill="#0004"/>${chest}${spots.slice(0, count).reverse().map(gem).join("")}</svg>`;
+}
 async function openGame(slug) {
   window.scrollTo(0, 0);
   const g0 = store.games?.find((x) => x.slug === slug || (x.variants || []).some((v) => v.slug === slug)) || { name: slug };
@@ -283,8 +298,17 @@ async function openGame(slug) {
   $("#bk").onclick = goBack;
 
   let g;
-  try { g = await apiFetch("/api/games/" + encodeURIComponent(slug)); }
-  catch { view.innerHTML = `<div class="empty">${L().err}</div>`; return; }
+  // If one server fails, try the other servers of the same game.
+  const tries = [slug, ...variants.map((v) => v.slug).filter((s) => s !== slug)];
+  for (const s of tries) {
+    try { g = await apiFetch("/api/games/" + encodeURIComponent(s)); if (s !== slug) slug = s; break; } catch {}
+  }
+  if (!g) {
+    view.innerHTML = `<div class="ghead"><button class="back-btn" id="bk">${ICON.back}</button><div><h1>${esc(g0.name)}</h1></div></div><div class="empty">${L().err}<br><button class="btn" id="retry" style="margin-top:14px">↻</button></div>`;
+    $("#bk").onclick = goBack; $("#retry").onclick = () => { tg?.BackButton?.offClick(goBack); openGame(slug); };
+    return;
+  }
+  g.fields ||= []; g.offers ||= [];
 
   const st = { values: {}, verified: null, offer: null };
   const optFields = g.fields.filter((f) => f.options && f.options.length);
@@ -344,7 +368,7 @@ async function openGame(slug) {
           return `
             <button class="offer-card ${st.offer?.id === o.id ? "on" : ""} ${o.stock === 0 ? "off" : ""}" data-o="${esc(o.id)}">
               ${first ? `<div class="offer-ribbon">First Recharge</div>` : ""}
-              ${o.image || g.image ? `<img class="offer-img" src="${esc(o.image || g.image)}" alt="" loading="lazy" style="width:56px;height:56px;object-fit:contain;margin:0 auto 6px;display:block;border-radius:10px" />` : `<div class="offer-diamond">💎</div>`}
+              <div class="offer-art">${o.image ? `<img src="${esc(o.image)}" alt="" loading="lazy" />` : offerArt(o, g.offers)}</div>
               <div class="offer-amount">${esc(big)}</div>
               ${sub ? `<div class="offer-sub">${esc(sub)}</div>` : ""}
               <div class="offer-price">${o.stock === 0 ? L().oos : `${fmt(o.price)} ${L().som}`}</div>

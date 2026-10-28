@@ -1,9 +1,10 @@
 const FAMILIES = [
+  ['PUBG: New State', /^(?:pubg\s*:?\s*new\s+state)(?=$|\s|[-:(])/i],
   ['Mobile Legends', /^(?:mobile\s+legends(?:\s*:\s*bang\s*bang|\s+bang\s*bang)?|mlbb)(?=$|\s|[-:(])/i],
   ['PUBG Mobile', /^(?:pubg\s+mobile|pubgm)(?=$|\s|[-:(])/i],
-  ['Free Fire', /^free\s+fire(?:\s+max)?(?=$|\s|[-:(])/i],
+  ['Free Fire', /^(?:garena\s+)?free\s+fire(?:\s+max)?(?=$|\s|[-:(])/i],
   ['Honor of Kings', /^honor\s+of\s+kings(?=$|\s|[-:(])/i],
-  ['Genshin Impact', /^genshin\s+impact(?=$|\s|[-:(])/i],
+  ['Genshin Impact', /^(?:hoyoverse\s+)?genshin\s+impact(?=$|\s|[-:(])/i],
   ['Call of Duty Mobile', /^call\s+of\s+duty\s*(?::\s*)?mobile(?=$|\s|[-:(])/i],
   ['Honkai: Star Rail', /^honkai\s*:?\s*star\s+rail(?=$|\s|[-:(])/i],
   ['Clash of Clans', /^clash\s+of\s+clans(?=$|\s|[-:(])/i],
@@ -13,10 +14,12 @@ const FAMILIES = [
   ['Valorant', /^valorant(?=$|\s|[-:(])/i],
 ];
 const REGION = /^(?:(?:global|worldwide|international|indonesia|indonesian|malaysia|singapore|philippines|brazil|turkey|russia|europe|usa|united states|vietnam|thailand|taiwan|hong kong|japan|korea|india|cambodia|myanmar|bangladesh|pakistan|mena|sea|cis|latam|na|eu|ru|id|br|tr|ph|sg|my|us|vn|th|tw|hk|jp|kr|in|bd|mm|kh|pk|all|other|region|server|servers|regions|only|except|excluding|exclusive|official|direct|top[ -]?up|diamonds|uc|instant|fast|slow|normal|discount|promo|special|double|bonus|weekly|monthly|pass|subscription|pack|packs|package|packages|[a-z]{2})\b|[\s,./&+()\[\]:–—-]|\d)+$/i;
+// Separate games that only share a prefix with a known family.
+const SEPARATE = /^(?:adventure|new\s+state|lite|bang\s+bang\s+adventure|rush|go)\b/i;
 const OTHER = /telegram|stars|premium|steam|gift|card|spotify|netflix|discord|apple|itunes|google play|chatgpt|youtube|xbox|playstation|psn|nitro|wallet|voucher|подар|карт/i;
 
 export function identifyGame(item) {
-  const name = String(item.name || item.slug || '').replace(/\s+/g, ' ').trim();
+  const name = String(item.name || item.slug || '').replace(/\s+/g, ' ').replace(/^garena\s+(?=free\s+fire)/i, '').trim();
   const kind = item.kind || (OTHER.test(name) ? 'other' : 'game');
   if (kind === 'other') {
     // Regional Steam wallets (Steam Wallet (US), (TR) ...) live inside one Steam card.
@@ -29,7 +32,8 @@ export function identifyGame(item) {
     if (!match) continue;
     const suffix = name.slice(match[0].length).replace(/^[\s\-–—:([\]]+|[\s)\]]+$/g, '').trim();
     // Unknown subtitles (e.g. Adventure) are separate games, not regions.
-    if (suffix && !REGION.test(suffix)) continue;
+    // Known games keep every package (Premium, Pass, Welkin...) inside one card.
+    if (suffix && SEPARATE.test(suffix)) continue;
     return { key: `game:${title.toLowerCase()}`, name: title, region: suffix || 'Global', kind };
   }
   // Group an unfamiliar game only when its suffix is a recognized region.
