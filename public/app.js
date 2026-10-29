@@ -300,7 +300,7 @@ async function renderShop() {
 function offerArt(o, all) {
   const n = String(o.name);
   if (/pass|membership|weekly|monthly|elite|welkin|prime|premium|plus|card|subscription/i.test(n) && !/^\s*\d/.test(n)) {
-    return `<svg viewBox="0 0 64 64" class="art"><defs><linearGradient id="pc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset="1" stop-color="#d4183d"/></linearGradient></defs><rect x="8" y="14" width="48" height="34" rx="7" fill="url(#pc)"/><rect x="8" y="22" width="48" height="6" fill="#0003"/><path d="M32 31l3 6 6 .8-4.5 4.2 1.2 6-5.7-3-5.7 3 1.2-6L23 37.8l6-.8z" fill="#fff"/></svg>`;
+    return `<svg viewBox="0 0 64 64" class="art"><defs><linearGradient id="pc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb347"/><stop offset="1" stop-color="#ff8a00"/></linearGradient></defs><rect x="8" y="14" width="48" height="34" rx="7" fill="url(#pc)"/><rect x="8" y="22" width="48" height="6" fill="#0003"/><path d="M32 31l3 6 6 .8-4.5 4.2 1.2 6-5.7-3-5.7 3 1.2-6L23 37.8l6-.8z" fill="#fff"/></svg>`;
   }
   const amt = (x) => Number((String(x.name).match(/[\d.,]+/) || ["0"])[0].replace(/[.,]/g, "")) || 0;
   const sorted = [...new Set(all.map(amt).filter(Boolean))].sort((a, b) => a - b);
@@ -486,7 +486,7 @@ async function openTelegramService(slug, type, g0) {
             ${L().buy} — ${fmt(price)} ${L().som}
           </button>
         ` : `
-          <button class="btn full" id="tgActionBtn" style="height:50px;font-size:14.5px;font-weight:800;border-radius:16px;background:linear-gradient(100deg,#f59e0b,#f2561d)">
+          <button class="btn full" id="tgActionBtn" style="height:50px;font-size:14.5px;font-weight:800;border-radius:16px;background:linear-gradient(100deg,#ffd75e,#ff9d00);background-size:200% 100%;animation:shine 2.8s linear infinite">
             ${L().balance_low || "Balans yetarli emas — To'ldirish"}
           </button>
         `}
